@@ -1,0 +1,356 @@
+<nav class="navbar navbar-dark bg-dark">
+    <span> Promesometro  </span>
+    
+    <button class="btn btn-sm btn-outline-secondary" id="boton-enlace" role="link" routerLink="/registro" mat-raised-button color="primary">REGISTRESE</button> 
+    <button class="btn btn-sm btn-outline-secondary" id="boton-enlace" role="link" routerLink="/login" mat-raised-button color="primary">LOGIN</button> 
+    <button class="btn btn-sm btn-outline-secondary" type="submit" (click)="deleteToken()">Cerrar Sesión</button>
+  </nav>
+ 
+<div>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalAddPartido">
+        Agregar Partido 
+      </button>  
+
+</div> 
+
+<div class="row">
+    <div class="col" *ngFor="let pa of partidos">
+        <div class="card" style="width: 18rem;">
+            <img src="{{ url + 'obtener-imagen-partido/' + pa.image}}"  width="300" height="200" *ngIf="pa.image">
+            <img src="./assets/ggg.png"  width="300" height="300" *ngIf="!pa.image" > 
+            <div class="card-body">
+              <h5 class="card-title">{{pa.nombre}}</h5>
+              <p class="card-text">{{pa.descripcion}}</p> 
+              
+              <div class="btn-group" role="group" aria-label="botones-card" *ngIf ="valitation() ==='admin'"  >
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalEditCont" (click)="getPartido(pa._id)">EDITAR</button> 
+                <button type="button" class="btn btn-primary"  (click)="deletePartido(pa._id)">ELIMINAR</button> 
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalAddCandidato" (click)="getPartido(pa._id)">AGREGAR Can</button> 
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalListCandidato" (click)="getCandidatos(pa._id)">List Can</button> 
+               </div> 
+               <div>
+                  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalListCandidato" (click)="getCandidatos(pa._id)">List Can</button> 
+               </div>
+            </div>
+          </div>
+    </div>
+
+</div>  
+
+<div class="modal fade" id="modalAddPartido" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <form #fromEncuesta="ngForm" (ngSubmit)="addP()"  > 
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          
+          <div class="form-group">
+            <label for="Nombre">Nombre</label>
+            <input type="text" name="nombre" #nombre="ngModel" [(ngModel)]="modelPartido.nombre" class="form-control" id="nombre"  placeholder="Enter nombre">
+          </div> 
+       <div class="form-group">
+            <label for="descripcion">descripcion</label>
+            <input type="text" name="descripcion" #descripcion="ngModel" [(ngModel)]="modelPartido.descripcion" class="form-control" id="descripcion"  placeholder="Enter descripcion">
+         </div>  
+      
+        </div>
+        <div class="modal-footer">
+          <button type="button"   class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Save changes</button>
+        </div>
+      </div> 
+    </form > 
+  </div>
+</div>   
+
+<div class="modal fade" id="modalEditCont" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <form #editarContacto="ngForm" (ngSubmit)="editPartido()"  > 
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <img src="{{ url + 'obtener-imagen-partido/' + modelPartido.image}}" class="rounded-circle" width="200" height="200" *ngIf="modelPartido.image">
+          <img src="./assets/ggg.png"  class="rounded-circle" width="200" height="200" *ngIf="!modelPartido.image" > 
+          <div class="form-group">
+            <label for="Nombre">Nombre</label>
+            <input type="text" name="nombre" #nombre="ngModel" [(ngModel)]="modelPartido.nombre" class="form-control" id="nombre"  placeholder="Enter nombre">
+          </div> 
+       <div class="form-group">
+            <label for="descripcion">descripcion</label>
+            <input type="text" name="descripcion" #descripcion="ngModel" [(ngModel)]="modelPartido.descripcion" class="form-control" id="descripcion"  placeholder="Enter descripcion">
+         </div> 
+
+      <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="inputGroupFileAddon01">Upload</span>
+          </div>
+          <div class="custom-file">
+            <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" (change)="fileChangeEvent($event)">
+            <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+          </div>
+      </div>
+      </div>
+        <div class="modal-footer">
+          <button type="button"   class="btn btn-secondary modal-close" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Save changes</button>
+        </div>
+      </div> 
+    </form > 
+    </div>
+  </div> 
+
+
+
+
+  <div class="modal fade" id="modalAddCandidato" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <form #fromEncuesta="ngForm" (ngSubmit)="addC()"  > 
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          
+         <div class="form-group">
+                <label for="Nombre">Nombre</label>
+                <input type="text" name="nombre" #nombre="ngModel" [(ngModel)]="modelCandidato.nombre" class="form-control" id="nombre"  placeholder="Enter nombre">
+              </div> 
+        <div class="form-group">
+                <label for="apellido">APELLIDO</label>
+                <input type="text" name="apellido" #apellido="ngModel" [(ngModel)]="modelCandidato.apellido" class="form-control" id="apellido"  placeholder="Enter apellido">
+             </div>  
+        <div class="form-group">
+              <label for="puesto">Puesto</label>
+              <input type="text" name="puesto" #puesto="ngModel" [(ngModel)]="modelCandidato.puesto" class="form-control" id="puesto"  placeholder="Enter Puesto">
+        </div>
+      
+        </div>
+        <div class="modal-footer">
+          <button type="button"   class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Save changes</button>
+        </div>
+      </div> 
+    </form > 
+  </div>
+</div>    
+
+<div class="modal fade" id="modalListCandidato" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+      
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">candidatos</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body"  *ngFor="let c of candidatos">  
+          <div class="card" style="width: 18rem;"> 
+            <img src="{{ url + 'obtener-imagen-candidato/' + c.image}}"  width="300" height="200" *ngIf="c.image">
+            <img src="./assets/ggg.png"  width="300" height="200" *ngIf="!c.image" > 
+              <div class="card-body">
+                <h5 class="card-title">{{c.puesto}}</h5> 
+                <h6 class="card-subtitle mb-2 text-muted">{{c.nombre}} </h6> 
+                <h6 class="card-subtitle mb-2 text-muted">{{c.apellido}} </h6>
+                <p class="card-text">{{c._id}}</p>
+
+                <div class="btn-group" role="group" aria-label="botones-card"  *ngIf ="valitation() ==='admin'">
+                  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalEditCan" (click)="getCandidato(c._id)">EDITAR</button> 
+                  <button type="button" class="btn btn-primary"  (click)="deleteCandidato(c._id)">ELIMINAR</button> 
+                  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalAddEnc" (click)="getCandidato(c._id)">AGREGAR E</button> 
+                  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalListPro" (click)="getEncuestas(c._id)">List Pro</button> 
+                 </div>
+                <div>
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalListPro" (click)="getEncuestas(c._id)">List Pro</button>
+                </div>
+              </div>
+            </div>
+      </div>
+    </div> 
+</div> 
+</div> 
+<div class="modal fade" id="modalEditCan" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+      <form #fromEncuesta="ngForm" (ngSubmit)="editCandidato()"  > 
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <img src="{{ url + 'obtener-imagen-candidato/' + modelCandidato.image}}" class="rounded-circle" width="200" height="200" *ngIf="modelCandidato.image">
+        <img src="./assets/ggg.png"  class="rounded-circle" width="200" height="200" *ngIf="!modelCandidato.image" > 
+       <div class="form-group">
+              <label for="Nombre">Nombre</label>
+              <input type="text" name="nombre" #nombre="ngModel" [(ngModel)]="modelCandidato.nombre" class="form-control" id="nombre"  placeholder="Enter nombre">
+            </div> 
+      <div class="form-group">
+              <label for="apellido">APELLIDO</label>
+              <input type="text" name="apellido" #apellido="ngModel" [(ngModel)]="modelCandidato.apellido" class="form-control" id="apellido"  placeholder="Enter apellido">
+           </div>  
+      <div class="form-group">
+            <label for="puesto">Puesto</label>
+            <input type="text" name="puesto" #puesto="ngModel" [(ngModel)]="modelCandidato.puesto" class="form-control" id="puesto"  placeholder="Enter Puesto">
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="inputGroupFileAddon01">Upload</span>
+        </div>
+        <div class="custom-file">
+          <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" (change)="fileChangeEvent($event)">
+          <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+        </div>
+
+
+      </div> 
+    </div>
+      <div class="modal-footer">
+        <button type="button"   class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Save changes</button>
+      </div>
+    </div> 
+  </form > 
+</div>
+</div>     
+<div class="modal fade" id="modalAddEnc" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+      <form #fromEncuesta="ngForm" (ngSubmit)="addE()"  > 
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        
+       <div class="form-group">
+              <label for="Nombre">TITULO</label>
+              <input type="text" name="titulo" #titulo="ngModel" [(ngModel)]="modelEncuesta.titulo" class="form-control" id="titulo"  placeholder="Enter nombre">
+            </div> 
+      <div class="form-group">
+              <label for="apellido">descripcion</label>
+              <input type="text" name="descripcion" #descripcion="ngModel" [(ngModel)]="modelEncuesta.descripcion" class="form-control" id="descripcion"  placeholder="Enter apellido">
+           </div>  
+      
+    
+      </div>
+      <div class="modal-footer">
+        <button type="button"   class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Save changes</button>
+      </div>
+    </div> 
+  </form > 
+</div>
+</div> 
+
+<div class="modal fade" id="modalListPro" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+      
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Propuestas</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body"  *ngFor="let e of encuestas">  
+          <div class="card" style="width: 18rem;"> 
+            
+              <div class="card-body">
+                <h5 class="card-title">{{e.titulo}}</h5> 
+                <h6 class="card-subtitle mb-2 text-muted">{{e.descripcion}} </h6> 
+                
+                <p class="card-text">{{e._id}}</p> 
+                <div *ngIf ="token"> 
+                    <button type="button" class="btn btn-success" (click)="votar(e, 'favor')">Cumplio</button>
+                  <button type="button" class="btn btn-danger" (click)="votar(e, 'contra')">Incumplio</button>
+                </div>
+
+                <div class="btn-group" role="group" aria-label="botones-card"  *ngIf ="valitation() ==='admin'">
+                  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalEditPropuesta" (click)="getEncuesta(e._id)">EDITAR</button> 
+                  <button type="button" class="btn btn-primary"  (click)="deleteEnc(e._id)">ELIMINAR</button> 
+                  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalResult" (click)="getResult(e._id)">Resultados</button> 
+                  
+                 </div> 
+                 <div>
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalResult" (click)="getResult(e._id)">Resultados</button> 
+                 </div>
+                
+              </div>
+            </div>
+      </div>
+    </div> 
+</div> 
+</div>  
+<div class="modal fade" id="modalEditPropuesta" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+      <form #fromEncuesta="ngForm" (ngSubmit)="editEnc()"  > 
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="Nombre">TITULO</label>
+          <input type="text" name="titulo" #titulo="ngModel" [(ngModel)]="modelEncuesta.titulo" class="form-control" id="titulo"  placeholder="Enter nombre">
+        </div> 
+  <div class="form-group">
+          <label for="apellido">descripcion</label>
+          <input type="text" name="descripcion" #descripcion="ngModel" [(ngModel)]="modelEncuesta.descripcion" class="form-control" id="descripcion"  placeholder="Enter apellido">
+       </div>  
+    </div>
+      <div class="modal-footer">
+        <button type="button"   class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Save changes</button>
+      </div>
+    </div> 
+  </form > 
+</div>
+</div>  
+
+<div class="modal fade" id="modalResult" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Resultados</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div>
+        <div style="display: block"></div>
+          <canvas baseChart
+            [data]="data"
+            [labels]="pieChartLabels"
+            chartType="pie"
+            [options]="pieChartOptions"
+            [colors]="pieChartColors"
+            [legend]="pieChartLegend">
+          </canvas>
+        </div>
+
+      </div> 
+
+
+
+</div>
+</div> 
